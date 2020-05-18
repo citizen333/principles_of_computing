@@ -1,8 +1,8 @@
 import pytest
 import random
 
-from ttt_game import ttt_game
-import ttt_game.poc_ttt_provided as provided
+from ttt_game_pckg import ttt_game
+import ttt_game_pckg.poc_ttt_provided as provided
 
 ttt_game.SCORE_CURRENT = 1.0
 ttt_game.SCORE_OTHER = 2.0

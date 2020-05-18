@@ -138,7 +138,7 @@ def test_reset_grid(tiled_grid, seed = 50):
     )
 ])
 def test_getting_tile(initial_grid, row, col):
-    assert initial_grid.get_tile(row, col) == initial_grid.board_grid[row][col]
+    assert initial_grid.get_tile(row, col) == initial_grid._board_grid[row][col]
 
 @pytest.mark.parametrize("row, col, value", [
     (

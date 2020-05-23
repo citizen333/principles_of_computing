@@ -5,7 +5,7 @@ Monte Carlo Tic-Tac-Toe Player
 import random
 
 # import poc_ttt_gui
-import ttt_game_pckg.poc_ttt_provided as provided
+import tic_tac_toe.poc_ttt_provided as provided
 
 # Constants for Monte Carlo simulator
 # You may change the values of these constants as desired, but

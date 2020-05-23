@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from game_2048_pckg.game_2048 import *
+from twenty_forty_eight.game_2048 import *
 
 @pytest.fixture
 def initial_grid():

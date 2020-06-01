@@ -14,13 +14,23 @@ class ClickerState:
     """
 
     def __init__(self):
-        pass
+        self._total_cookies = 0.0
+        self._current_cookies = 0.0
+        self._current_time = 0.0
+        self._current_cps = 1.0
 
     def __str__(self):
         """
         Return human readable state
         """
-        return "not yet implemented"
+
+        game_state = [
+            "Total cookies baked is " + str(self._total_cookies),
+            "Number of cookies currently available is " + str(self._current_cookies),
+            "Current time is " + str(self._current_time),
+            "Current CPS is " + str(self._current_cps)
+        ]
+        return "\n" + "\n".join(game_state)
 
     def get_cookies(self):
         """

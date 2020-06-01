@@ -15,7 +15,6 @@ Test score function
 def test_score(hand, output):
     assert yahtzee_game.score(hand) == output
 
-
 @pytest.mark.parametrize("held_dice, num_die_sides, num_free_dice, outcome", [
     ((1, 2, 1), 2, 2, 4.5),
     ((), 2, 2, 2.5),

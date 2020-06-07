@@ -1,8 +1,7 @@
 import pytest
 import random
 
-from tic_tac_toe import ttt_game
-import tic_tac_toe.poc_ttt_provided as provided
+from poc.tic_tac_toe import ttt_game, poc_ttt_provided as provided
 
 ttt_game.SCORE_CURRENT = 1.0
 ttt_game.SCORE_OTHER = 2.0

@@ -1,6 +1,6 @@
 import pytest
 
-from yahtzee import yahtzee_game
+from poc.yahtzee import yahtzee_game
 
 """
 Test score function

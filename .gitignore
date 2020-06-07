@@ -1,0 +1,8 @@
+# Folders that has to be ignored
+.vscode/
+.idea/
+venv_37/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]

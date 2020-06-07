@@ -1,5 +1,5 @@
 import pytest
-from cookies import cookies_game
+from poc.cookies import cookies_game
 
 
 @pytest.fixture

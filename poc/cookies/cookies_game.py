@@ -1,8 +1,7 @@
 """
 Cookie Clicker Simulator
 """
-
-import cookies.poc_clicker_provided as provided
+from poc.cookies import poc_clicker_provided as provided
 import math
 import matplotlib.pyplot as plt
 
@@ -252,7 +251,6 @@ def run_strategy(strategy_name, time, strategy):
 
     history = state.get_history()
     history = [(math.log(1 + item[0]), math.log(1 + item[3])) for item in history]
-    print(state.get_history())
     # simpleplot.plot_lines(strategy_name, 1000, 400, 'Time', 'Total Cookies', [history], True)
     assert isinstance(strategy_name, str)
     plt.plot(*zip(*history), label=strategy_name)
@@ -272,11 +270,6 @@ def run():
     plt.legend()
     plt.show()
 
-    # Add calls to run_strategy to run additional strategies
-    # run_strategy("Cheap", SIM_TIME, strategy_cheap)
-    # run_strategy("Expensive", SIM_TIME, strategy_expensive)
-    # run_strategy("Best", SIM_TIME, strategy_best)
 
-
-run()
-strategy_expensive(500000.0, 1.0, [(0.0, None, 0.0, 0.0)], 5.0, provided.BuildInfo({'A': [5.0, 1.0], 'C': [50000.0, 3.0], 'B': [500.0, 2.0]}, 1.15))
+# run()
+# strategy_expensive(500000.0, 1.0, [(0.0, None, 0.0, 0.0)], 5.0, provided.BuildInfo({'A': [5.0, 1.0], 'C': [50000.0, 3.0], 'B': [500.0, 2.0]}, 1.15))

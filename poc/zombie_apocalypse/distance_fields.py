@@ -26,7 +26,8 @@ def create_distance_field(entity_list):
         for grid_col in range(len(distance_grid[grid_row])):
             entity_dist = list()
             for entity in entity_list:
-                entity_dist.append(manhattan_distance(entity[0], entity[1], grid_row, grid_col))
+                entity_dist.append(manhattan_distance(entity[0], entity[1],
+                grid_row, grid_col))
             distance_grid[grid_row][grid_col] = min(entity_dist)
 
     return distance_grid

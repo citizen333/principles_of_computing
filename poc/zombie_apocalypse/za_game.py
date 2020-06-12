@@ -16,6 +16,53 @@ OBSTACLE = 5
 HUMAN = 6
 ZOMBIE = 7
 
+class Queue:
+    """
+    A simple implementation of a FIFO queue.
+    """
+
+    def __init__(self):
+        """ 
+        Initialize the queue.
+        """
+        self._items = []
+
+    def __len__(self):
+        """
+        Return the number of items in the queue.
+        """
+        return len(self._items)
+    
+    def __iter__(self):
+        """
+        Create an iterator for the queue.
+        """
+        for item in self._items:
+            yield item
+
+    def __str__(self):
+        """
+        Return a string representation of the queue.
+        """
+        return str(self._items)
+
+    def enqueue(self, item):
+        """
+        Add item to the queue.
+        """        
+        self._items.append(item)
+
+    def dequeue(self):
+        """
+        Remove and return the least recently inserted item.
+        """
+        return self._items.pop(0)
+
+    def clear(self):
+        """
+        Remove all items from the queue.
+        """
+        self._items = []
 
 class Apocalypse(poc_grid.Grid):
     """
@@ -55,7 +102,7 @@ class Apocalypse(poc_grid.Grid):
         """
         Add zombie to the zombie list
         """
-        self._zombie_list.append([row, col])
+        self._zombie_list.append((row, col))
         
     def num_zombies(self):
         """
@@ -75,7 +122,7 @@ class Apocalypse(poc_grid.Grid):
         """
         Add human to the human list
         """
-        self._human_list.append([row, col])
+        self._human_list.append((row, col))
         
     def num_humans(self):
         """
@@ -96,23 +143,91 @@ class Apocalypse(poc_grid.Grid):
         Distance at member of entity_list is zero
         Shortest paths avoid obstacles and use four-way distances
         """
-        return
+        entity_dict = {
+            ZOMBIE: self._zombie_list,
+            HUMAN: self._human_list
+        }
+        grid_height = self.get_grid_height()
+        grid_width = self.get_grid_width()
+        visited = poc_grid.Grid(grid_height, grid_width)
+        distance_field = [[grid_width * grid_height] * grid_width
+                          for _ in range(grid_height)]
+        boundary = Queue()
+        for cell in entity_dict[entity_type]:
+            boundary.enqueue(cell)
+            visited.set_full(cell[0], cell[1])
+            distance_field[cell[0]][cell[1]] = 0
+        while len(boundary) > 0:
+            current_cell = boundary.dequeue()
+            neighbours_list = poc_grid.Grid.four_neighbors(self,
+                                                           current_cell[0],
+                                                           current_cell[1])
+            for neighbour in neighbours_list:
+                if (visited.is_empty(neighbour[0], neighbour[1])
+                    and self.is_empty(neighbour[0], neighbour[1])):
+                    visited.set_full(neighbour[0], neighbour[1])
+                    distance =(
+                        distance_field[current_cell[0]][current_cell[1]] + 1
+                    )
+                    distance_field[neighbour[0]][neighbour[1]] = distance
+                    boundary.enqueue(neighbour)
+        
+        return distance_field
+        
     
     def move_humans(self, zombie_distance_field):
         """
         Function that moves humans away from zombies, diagonal moves
         are allowed
         """
-        pass
-    
+        dummy_human_list = list()
+        for human in self._human_list:
+            new_distance = zombie_distance_field[human[0]][human[1]]
+            possible_moves = [human]
+            neighbours_list = self.eight_neighbors(human[0], human[1])
+            for neighbour in neighbours_list:
+                if self.is_empty(neighbour[0], neighbour[1]):
+                    neighbour_distance =\
+                        zombie_distance_field[neighbour[0]][neighbour[1]]
+                    if neighbour_distance > new_distance:
+                        new_distance = neighbour_distance
+                        possible_moves = list()
+                    if neighbour_distance >= new_distance:
+                        possible_moves.append(neighbour)
+            dummy_human_list.append(random.choice(possible_moves))
+        
+        self._human_list = dummy_human_list
+
     def move_zombies(self, human_distance_field):
         """
         Function that moves zombies towards humans, no diagonal moves
         are allowed
         """
-        pass
+        dummy_zombie_list = list()
+        for zombie in self._zombie_list:
+            new_distance = human_distance_field[zombie[0]][zombie[1]]
+            possible_moves = [zombie]
+            neighbours_list = self.four_neighbors(zombie[0], zombie[1])
+            for neighbour in neighbours_list:
+                if self.is_empty(neighbour[0], neighbour[1]):
+                    neighbour_distance =\
+                        human_distance_field[neighbour[0]][neighbour[1]]
+                    if neighbour_distance < new_distance:
+                        new_distance = neighbour_distance
+                        possible_moves = list()
+                    if neighbour_distance <= new_distance:
+                        possible_moves.append(neighbour)
+            dummy_zombie_list.append(random.choice(possible_moves))
+        
+        self._zombie_list = dummy_zombie_list
 
 # Start up gui for simulation - You will need to write some code above
 # before this will work without errors
 
 # poc_zombie_gui.run_gui(Apocalypse(30, 40))
+
+obj = Apocalypse(3, 3, [], [(1, 1)], [])
+obj.add_human(1, 1)
+print(obj)
+print("humans", str(list(obj.humans())))
+print("zombies", str(list(obj.zombies())))

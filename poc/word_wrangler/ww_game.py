@@ -20,7 +20,11 @@ def remove_duplicates(list1):
 
     This function can be iterative.
     """
-    return []
+    deduplicated_list = list()
+    for item in list1:
+        if item not in deduplicated_list:
+            deduplicated_list.append(item)
+    return deduplicated_list
 
 def intersect(list1, list2):
     """
@@ -31,7 +35,12 @@ def intersect(list1, list2):
 
     This function can be iterative.
     """
-    return []
+    intersect_list = []
+    deduplicated_list1 = remove_duplicates(list1)
+    for item in deduplicated_list1:
+        if item in list2:
+            intersect_list.append(item)
+    return intersect_list
 
 # Functions to perform merge sort
 
@@ -43,8 +52,23 @@ def merge(list1, list2):
     either list1 or list2.
 
     This function can be iterative.
-    """   
-    return []
+    """
+    size_1 = len(list1) 
+    size_2 = len(list2) 
+    
+    res = [] 
+    i, j = 0, 0
+    
+    while i < size_1 and j < size_2: 
+        if list1[i] < list2[j]: 
+            res.append(list1[i]) 
+            i += 1
+        else: 
+            res.append(list2[j]) 
+            j += 1
+    
+    res = res + list1[i:] + list2[j:] 
+    return res
                 
 def merge_sort(list1):
     """
@@ -54,7 +78,13 @@ def merge_sort(list1):
 
     This function should be recursive.
     """
-    return []
+    if len(list1) < 2:
+        return list1
+    else:
+        pivot = list1[0]
+        pivot_list = [item for item in list1 if item == pivot]
+        other_list = [item for item in list1 if item != pivot]
+        return merge(merge_sort(other_list), pivot_list)
 
 # Function to generate all strings for the word wrangler game
 
@@ -68,7 +98,23 @@ def gen_all_strings(word):
 
     This function should be recursive.
     """
-    return []
+    assert type(word) == str
+    if word == "":
+        return [word]
+    else:
+        first = word[0]
+        rest = word[1:]
+        first_strings = []
+        rest_strings = gen_all_strings(rest)
+        print("first:", first)
+        for item in rest_strings:
+            print("item:", item)
+            for idx in range(len(item) + 1):
+                new_word = item[:idx] + first + item[idx:]
+                print("new word:", new_word)
+                first_strings.append(new_word)
+        print(rest_strings + first_strings)
+        return rest_strings + first_strings
 
 # Function to load words from a file
 
@@ -91,4 +137,4 @@ def run():
     provided.run_game(wrangler)
 
 # Uncomment when you are ready to try the game
-# run()
+# run()  

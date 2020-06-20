@@ -1,3 +1,9 @@
+"""
+A simple recursive solver for Nim
+http://en.wikipedia.org/wiki/Nim#The_21_game
+"""
+
+
 MAX_REMOVE = 3
 
 # recursive solver with no memoization
@@ -9,9 +15,11 @@ def evaluate_position(current_num):
     """
     global counter
     counter += 1
-
-    # enter code here
-
+    
+    for removed_num in range(1, min(MAX_REMOVE + 1, current_num + 1)):
+        new_num = current_num - removed_num
+        if evaluate_position(new_num) == "lost":
+            return "won"
     return "lost"
 
 
@@ -21,7 +29,7 @@ def run_standard(items):
     """
     global counter
     counter = 0
-    print
+    print()
     print("Standard recursive version")
     print("Position with", items, "items is", evaluate_position(items))
     print("Evaluated in", counter, "calls")
@@ -41,8 +49,12 @@ def evaluate_memo_position(current_num, memo_dict):
     global counter
     counter += 1
 
-    # enter code here
-
+    for removed_num in range(1, min(MAX_REMOVE + 1, current_num + 1)):
+        new_num = current_num - removed_num
+        if new_num not in memo_dict:
+            memo_dict[new_num] = evaluate_memo_position(new_num, memo_dict)
+        if memo_dict[new_num] == "lost":
+            return "won"
     return "lost"
 
 
@@ -52,10 +64,9 @@ def run_memoized(items):
     """
     global counter
     counter = 0
-    print
+    print()
     print("Memoized version")
-    print("Position with", items, "items is",
-          evaluate_memo_position(items, {0 : "lost"}))
+    print("Position with", items, "items is", evaluate_memo_position(items, {0 : "lost"}))
     print("Evaluated in", counter, "calls")
     
 run_memoized(21)

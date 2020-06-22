@@ -18,7 +18,23 @@ def mm_move(board, player):
     of the given board and the second element is the desired move as a
     tuple, (row, col).
     """
-    return 0, (-1, -1)
+    scores_dict = {}
+    if SCORES.get(board.check_win(), None) is not None:
+        return SCORES[board.check_win()], (-1, -1)
+    else:
+        for move in board.get_empty_squares():
+            clone_board = board.clone()
+            clone_board.move(move[0], move[1], player)
+            score, next_move = mm_move(clone_board,
+                                       provided.switch_player(player))
+            if score * SCORES[player] == 1:
+                return score, move
+            else:
+                scores_dict[move] = score * SCORES[player]
+        print(scores_dict)
+        max_score = max(scores_dict.values())
+        minimax_moves = [key for key, val in scores_dict if val == max_score]
+        return max_score * SCORES[player], minimax_moves[0]
 
 def move_wrapper(board, player, trials):
     """
@@ -34,5 +50,5 @@ def move_wrapper(board, player, trials):
 # Both should be commented out when you submit for
 # testing to save time.
 
-# provided.play_game(move_wrapper, 1, False)        
+provided.play_game(move_wrapper, 1, False)        
 # poc_ttt_gui.run_gui(3, provided.PLAYERO, move_wrapper, 1, False)

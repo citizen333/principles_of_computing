@@ -19,21 +19,20 @@ def mm_move(board, player):
     tuple, (row, col).
     """
     scores_dict = {}
-    if SCORES.get(board.check_win(), None) is not None:
+    if board.check_win() is not None:
         return SCORES[board.check_win()], (-1, -1)
     else:
         for move in board.get_empty_squares():
             clone_board = board.clone()
             clone_board.move(move[0], move[1], player)
-            score, next_move = mm_move(clone_board,
-                                       provided.switch_player(player))
+            score = mm_move(clone_board, provided.switch_player(player))[0]
             if score * SCORES[player] == 1:
                 return score, move
             else:
                 scores_dict[move] = score * SCORES[player]
-        print(scores_dict)
         max_score = max(scores_dict.values())
-        minimax_moves = [key for key, val in scores_dict if val == max_score]
+        minimax_moves = [key for key, val in scores_dict.items()
+                             if val == max_score]
         return max_score * SCORES[player], minimax_moves[0]
 
 def move_wrapper(board, player, trials):

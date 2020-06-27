@@ -25,13 +25,13 @@ def test_zombie_list(apocalypse_sim_full):
     apocalypse_sim_full.add_zombie(1, 1)
     apocalypse_sim_full.add_zombie(2, 2)
     assert apocalypse_sim_full.num_zombies() == 3
-    assert list(apocalypse_sim_full.zombies()) == [[2, 0], [1, 1], [2, 2]]
+    assert list(apocalypse_sim_full.zombies()) == [(2, 0), (1, 1), (2, 2)]
 
 def test_humans_list(apocalypse_sim_full):
     apocalypse_sim_full.add_human(1, 1)
     apocalypse_sim_full.add_human(2, 2)
     assert apocalypse_sim_full.num_humans() == 3
-    assert list(apocalypse_sim_full.humans()) == [[0, 2], [1, 1], [2, 2]]
+    assert list(apocalypse_sim_full.humans()) == [(0, 2), (1, 1), (2, 2)]
 
 @pytest.mark.parametrize("entity_type, output",[
         (za_game.HUMAN, [[12, 1, 0, 1],

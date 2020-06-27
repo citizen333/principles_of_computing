@@ -132,7 +132,17 @@ class Puzzle:
         Returns a boolean
         """
         # replace with your code
-        return False
+        assert self._grid[target_row][target_col] == 0
+        start_value = target_row * self._width + target_col + 1
+        for cell_value in range(start_value, self._width * self._height):
+            row = cell_value // self._width
+            col = cell_value % self._height
+            assert (self._grid[row][col] == cell_value,
+                    "Lower_row_invariant: "
+                    + "At cell (" + str(row) + "," + str(col) + ") "
+                    + "expected value is " + str(cell_value)
+                    + ", actual is " + str(self._grid[row][col]))
+        return True
 
     def solve_interior_tile(self, target_row, target_col):
         """

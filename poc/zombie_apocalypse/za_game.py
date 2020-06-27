@@ -116,7 +116,7 @@ class Apocalypse(poc_grid.Grid):
         added.
         """
         for zombie in self._zombie_list:
-            yield zombie
+            yield tuple(zombie)
 
     def add_human(self, row, col):
         """
@@ -135,7 +135,7 @@ class Apocalypse(poc_grid.Grid):
         Generator that yields the humans in the order they were added.
         """
         for human in self._human_list:
-            yield human
+            yield tuple(human)
         
     def compute_distance_field(self, entity_type):
         """

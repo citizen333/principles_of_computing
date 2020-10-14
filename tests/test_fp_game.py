@@ -17,4 +17,3 @@ def test_lower_row_invariant(target_row = 2, target_col = 1):
     my_grid = fp_game.Puzzle(2, 2, initial_grid=[[0, 1], [2, 3]])
     print(my_grid)
     assert my_grid.get_height() == 2
-    assert half_messed_grid.lower_row_invariant(target_row, target_col)

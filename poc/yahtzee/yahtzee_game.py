@@ -1,6 +1,7 @@
 """
 Planner for Yahtzee
 Simplifications:  only allow discard and roll, only score against upper level
+Theme: combinatorics
 """
 
 # Used to increase the timeout, if necessary

@@ -1,5 +1,6 @@
 """
 Student portion of Zombie Apocalypse mini-project
+Theme: generators, stacks, queues
 """
 
 import random

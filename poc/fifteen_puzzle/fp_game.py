@@ -19,8 +19,8 @@ class Puzzle:
         self._height = puzzle_height
         self._width = puzzle_width
         self._grid = [[col + puzzle_width * row
-                       for col in range(self._width)]
-                       for row in range(self._height)]
+                        for col in range(self._width)]
+                        for row in range(self._height)]
 
         if initial_grid != None:
             for row in range(puzzle_height):
@@ -131,34 +131,115 @@ class Puzzle:
         at the given position in the bottom rows of the puzzle (target_row > 1)
         Returns a boolean
         """
-        # replace with your code
-        assert self._grid[target_row][target_col] == 0
-        start_value = target_row * self._width + target_col + 1
-        for cell_value in range(start_value, self._width * self._height):
-            row = cell_value // self._width
-            col = cell_value % self._height
-            assert (self._grid[row][col] == cell_value,
-                    "Lower_row_invariant: "
-                    + "At cell (" + str(row) + "," + str(col) + ") "
-                    + "expected value is " + str(cell_value)
-                    + ", actual is " + str(self._grid[row][col]))
-        return True
+        try:
+            # Check that zero is in correct position
+            zero_row, zero_col = self.current_position(0, 0)
+            assert zero_row == target_row
+            assert zero_col == target_col
+            # Check that cells of underlying rows are in correct position
+            for row in range(target_row + 1, self._height):
+                for col in range(self._width):
+                    current_row, current_col = self.current_position(row, col)
+                    assert current_row == row
+                    assert current_col == col
+            # Check that cells of current row is in correct position
+            for col in range(target_col + 1, self._width):
+                current_row, current_col = self.current_position(target_row, col)
+                assert current_row == target_row
+                assert current_col == col
+            return True
+        except AssertionError:
+            return False
 
     def solve_interior_tile(self, target_row, target_col):
         """
         Place correct tile at target position
         Updates puzzle and returns a move string
         """
-        # replace with your code
-        return ""
+        assert self.lower_row_invariant(target_row, target_col)
+
+        move_delta = ""
+        move_string = ""
+        zero_row, zero_col = self.current_position(0, 0)
+        current_row, current_col = self.current_position(target_row, target_col)
+
+        while (current_row, current_col) != (target_row, target_col):
+            if (current_col == target_col) & ((target_row - current_row) == 1):
+                move_delta = "uld"
+            if zero_row > current_row:
+                move_delta = "u"
+            elif zero_col > current_col:
+                move_delta = "l"
+            elif (current_col - zero_col) > 1:
+                move_delta = "r"
+            elif zero_row < current_row:
+                move_delta = "ld"
+            elif current_row == target_row:
+                move_delta = "urrdl"
+            elif current_col < target_col:
+                move_delta = "drrul"
+            elif (current_col > target_col) & ((target_row - current_row) == 1):
+                move_delta = "rulld"
+            elif current_col > target_col:
+                move_delta = "rdllu"
+            elif current_col == target_col:
+                move_delta = "druld"
+            move_string += move_delta
+            self.update_puzzle(move_delta)
+            zero_row, zero_col = self.current_position(0, 0)
+            current_row, current_col =\
+                self.current_position(target_row, target_col)
+        if zero_row == (target_row - 1):
+                move_delta = "ld"
+                move_string += move_delta
+                self.update_puzzle(move_delta)
+        assert self.lower_row_invariant(target_row, target_col - 1)
+        return move_string
+
+
 
     def solve_col0_tile(self, target_row):
         """
         Solve tile in column zero on specified row (> 1)
         Updates puzzle and returns a move string
         """
-        # replace with your code
-        return ""
+        assert self.lower_row_invariant(target_row, 0)
+
+        move_delta = ""
+        move_string = ""
+        zero_row, zero_col = self.current_position(0, 0)
+        current_row, current_col = self.current_position(target_row, 0)
+
+        while (current_row, current_col) != (target_row, 0):
+            if zero_row == target_row:
+                move_delta = "ur"
+            elif zero_row > current_row:
+                move_delta = "u"
+            elif zero_col > (current_col):
+                move_delta = "l"
+            elif (current_col - zero_col) > 1:
+                move_delta = "r"
+            elif zero_row < current_row:
+                move_delta = "ld"
+            elif self.current_position(target_row, 0) == (target_row - 1, 1):
+                move_delta = "ruldrdlurdluurddlur"
+            elif (current_col > 1) & ((target_row - current_row) == 1):
+                move_delta = "rulld"
+            elif current_col > 1:
+                move_delta = "rdllu"
+            elif current_col == 1:
+                move_delta = "druld"
+            move_string += move_delta
+            self.update_puzzle(move_delta)
+            zero_row, zero_col = self.current_position(0, 0)
+            current_row, current_col = self.current_position(target_row, 0)
+        
+        move_delta = "r" * (self.get_width() - 2)
+        move_string += move_delta
+        self.update_puzzle(move_delta)
+
+        assert self.lower_row_invariant(target_row - 1, self.get_width() - 1)
+        return move_string
 
     #############################################################
     # Phase two methods
@@ -169,8 +250,27 @@ class Puzzle:
         at the given column (col > 1)
         Returns a boolean
         """
-        # replace with your code
-        return False
+        try:
+            zero_row, zero_col = self.current_position(0, 0)
+            assert zero_row == 0
+            assert zero_col == target_col
+            # Check that cells of rows below 1 are in correct position
+            for row in range(2, self._height):
+                for col in range(self._width):
+                    current_row, current_col = self.current_position(row, col)
+                    assert current_row == row
+                    assert current_col == col
+            # Check that cells of row 0 and 1 are in correct position
+            for row in range(2):
+                for col in range(target_col, self._width):
+                    if row == 0 and col == target_col:
+                        continue
+                    current_row, current_col = self.current_position(row, col)
+                    assert current_row == row
+                    assert current_col == col
+            return True
+        except AssertionError:
+            return False
 
     def row1_invariant(self, target_col):
         """
@@ -178,24 +278,59 @@ class Puzzle:
         at the given column (col > 1)
         Returns a boolean
         """
-        # replace with your code
-        return False
+        try:
+            for col in range(target_col + 1, self._width):
+                current_row, current_col = self.current_position(0, col)
+                assert current_row == 0
+                assert current_col == col
+            assert self.lower_row_invariant(1, target_col)
+            return True
+        except AssertionError:
+            return False
 
     def solve_row0_tile(self, target_col):
         """
         Solve the tile in row zero at the specified column
         Updates puzzle and returns a move string
         """
-        # replace with your code
-        return ""
+        assert self.row0_invariant(target_col)
+        move_delta = ""
+        move_string = ""
+        zero_row, zero_col = self.current_position(0, 0)
+        current_row, current_col = self.current_position(0, target_col)
+
+        while (current_row, current_col) != (0, target_col):
+            if zero_col == target_col:
+                move_delta = "ld"
+            elif zero_col > current_col:
+                move_delta = "l"
+            elif (target_col - current_col == 1) & (current_row == 0):
+                move_delta = "uld"
+            elif zero_row > current_row:
+                move_delta = "urdl"
+            elif current_col < (target_col - 1):
+                move_delta = "urrdl"
+            elif target_col - current_col == 1:
+                move_delta = "urdlurrdluldrruld"
+            move_string += move_delta
+            self.update_puzzle(move_delta)
+            current_row, current_col = self.current_position(0, target_col)
+            zero_row, zero_col = self.current_position(0, 0)
+        assert self.row1_invariant(target_col - 1)
+        return move_string
 
     def solve_row1_tile(self, target_col):
         """
         Solve the tile in row one at the specified column
         Updates puzzle and returns a move string
         """
-        # replace with your code
-        return ""
+        assert self.row1_invariant(target_col)
+        move_string = self.solve_interior_tile(1, target_col)
+        move_delta = "ur"
+        move_string += move_delta
+        self.update_puzzle(move_delta)
+        assert self.row0_invariant(target_col)
+        return move_string
 
     ###########################################################
     # Phase 3 methods
@@ -205,16 +340,39 @@ class Puzzle:
         Solve the upper left 2x2 part of the puzzle
         Updates the puzzle and returns a move string
         """
-        # replace with your code
-        return ""
+        assert self.row1_invariant(1)
+        move_string = ""
+        move_delta = "lu"
+        move_string += move_delta
+        self.update_puzzle(move_delta)
+        
+        while not self.lower_row_invariant(0, 0):
+            move_delta = "rdlu"
+            move_string += move_delta
+            self.update_puzzle(move_delta)
+        
+        return move_string
 
     def solve_puzzle(self):
         """
         Generate a solution string for a puzzle
         Updates the puzzle and returns a move string
         """
-        # replace with your code
-        return ""
+        move_string = ""
+        zero_row, zero_col = self.current_position(0, 0)
+        move_delta = ("r" * (self._width - zero_col - 1))\
+                   + ("d" * (self._height - zero_row - 1))
+        move_string += move_delta
+        self.update_puzzle(move_delta)
+        for row in range(self._height-1, 1, -1):
+            for col in range(self._width-1, 0, -1):
+                move_string += self.solve_interior_tile(row, col)
+            move_string += self.solve_col0_tile(row)
+        for col in range(self._width-1, 1, -1):
+            move_string += self.solve_row1_tile(col)
+            move_string += self.solve_row0_tile(col)
+        move_string += self.solve_2x2()
+        return move_string
 
 # Start interactive simulation
 # poc_fifteen_gui.FifteenGUI(Puzzle(4, 4))

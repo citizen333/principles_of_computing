@@ -1,5 +1,6 @@
 """
 Mini-max Tic-Tac-Toe Player
+Theme: minimax, lambda, trees
 """
 
 # import poc_ttt_gui

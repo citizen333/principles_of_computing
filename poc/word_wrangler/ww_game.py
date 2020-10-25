@@ -1,5 +1,6 @@
 """
 Student code for Word Wrangler game
+Theme: recursion, binary search
 """
 
 # import urllib2
